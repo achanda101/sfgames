@@ -430,6 +430,11 @@ const InclusionGame = () => {
                     </div>
 
                     <div className="card-body">
+                        <img
+                            src="/inclusion.jpg"
+                            alt="Inclusion & Diversity Quiz Introduction"
+                            style={{ width: "100%", display: "block", marginBottom: "1.5rem", borderRadius: "8px" }}
+                        />
                         <h2>Welcome!</h2>
                         <p>You are an HR professional at a leading corporate organisation in India. Your mission is to ensure an inclusive and engaging workplace for all employees while also attracting diverse talent.</p>
 

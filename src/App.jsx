@@ -4,6 +4,7 @@ import Header from './components/Header';
 import GameCardsGrid from "./games/gameCards";
 import InclusionGame from "./games/inclusionGame";
 import FinancialGame from "./games/financialGame";
+import WorkplaceGame from "./games/workplaceGame";
 import Login from "./Login";
 import Admin from "./Admin";
 import PrivateRoutes from './utils/PrivateRoutes'
@@ -41,7 +42,7 @@ function App() {
           } />
           <Route path="/workplace" element={
 
-            <h1>Work Etiquette Game</h1>
+            <WorkplaceGame />
 
           } />
           <Route path="/posh" element={

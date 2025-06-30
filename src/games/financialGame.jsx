@@ -443,12 +443,18 @@ const FinancialGame = () => {
             <div className="game-container">
                 <div className="game-card">
                     <div className="card-header">
-                        <h1>Financial Literacy Game | ಆರ್ಥಿಕ ಸಾಕ್ಷರತಾ ಆಟ</h1>
+                        <h1>Financial Literacy Game</h1>
+                        <h1>ಆರ್ಥಿಕ ಸಾಕ್ಷರತಾ ಆಟ</h1>
                         <p>Learn to manage your finances</p>
                         <p>ನಿಮ್ಮ ಹಣಕಾಸನ್ನು ನಿರ್ವಹಿಸಲು ಕಲಿಯಿರಿ</p>
                     </div>
 
                     <div className="card-body">
+                        <img
+                            src="/financial.jpg"
+                            alt="Financial Literacy Quiz Introduction"
+                            style={{ width: "100%", display: "block", marginBottom: "1.5rem", borderRadius: "8px" }}
+                        />
                         <h2>Welcome! ಸ್ವಾಗತ!</h2>
                         <p>This quiz will help you learn smart ways to handle your money every day. We'll ask you 10 questions about saving, spending, and planning for your future.</p>
                         <p>

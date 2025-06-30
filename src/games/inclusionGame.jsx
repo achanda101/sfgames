@@ -425,7 +425,7 @@ const InclusionGame = () => {
             <div className="game-container">
                 <div className="game-card">
                     <div className="card-header">
-                        <h1>Inclusion & Diversity Game</h1>
+                        <h1>Inclusion & Diversity Quiz</h1>
                         <p>Become an LGBTIAQ+ inclusive HR Personnel</p>
                     </div>
 
@@ -474,7 +474,7 @@ const InclusionGame = () => {
             <div className="game-container">
                 <div className="game-card results-card">
                     <div className="card-header">
-                        <h1>Game Results</h1>
+                        <h1>Quiz Results</h1>
                     </div>
 
                     <div className="card-body">
@@ -537,10 +537,10 @@ const InclusionGame = () => {
                 <div className="card-header">
                     <h1>Scenario {currentScenario + 1}: {scenarios[ currentScenario ].title}</h1>
                     <div className="points-display">
-                        <div className="point-badge inclusion-badge">
+                        <div className="point-badge primary-badge">
                             Inclusion: {inclusionPoints}
                         </div>
-                        <div className="point-badge diversity-badge">
+                        <div className="point-badge secondary-badge">
                             Diversity: {diversityPoints}
                         </div>
                     </div>

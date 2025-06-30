@@ -534,11 +534,11 @@ const WorkplaceGame = () => {
     // Introduction Screen
     if (gameState === 'intro') {
         return (
-            <div className="game-container">
+            <div className="game-container blue">
                 <div className="game-card">
-                    <div className="card-header">
-                        <h1>Workplace Etiquette Game</h1>
-                        <h1>ಕೆಲಸದ ಸ್ಥಳದ ಶಿಷ್ಟಾಚಾರ ಆಟ</h1>
+                    <div className="card-header blue">
+                        <h1>Workplace Etiquette Quiz</h1>
+                        <h1>ಕೆಲಸದ ಸ್ಥಳದ ಶಿಷ್ಟಾಚಾರ ರಸಪ್ರಶ್ನೆ</h1>
                     </div>
 
                     <div className="card-body">
@@ -567,7 +567,7 @@ const WorkplaceGame = () => {
                             </ul>
                         </div>
 
-                        <button onClick={startGame} className="primary-button">
+                        <button onClick={startGame} className="primary-button blue">
                             Start Game| ಪ್ರಾರಂಭಿಸಿ<ArrowRight className="icon" size={18} />
                         </button>
                     </div>
@@ -582,10 +582,10 @@ const WorkplaceGame = () => {
         const totalPoints = workplacePoints;
 
         return (
-            <div className="game-container">
+            <div className="game-container blue">
                 <div className="game-card results-card">
-                    <div className="card-header">
-                        <h1>Game Results</h1>
+                    <div className="card-header blue">
+                        <h1>Quiz Results</h1>
                     </div>
 
                     <div className="card-body">
@@ -627,7 +627,7 @@ const WorkplaceGame = () => {
                             ))}
                         </div>
 
-                        <button onClick={resetGame} className="primary-button">
+                        <button onClick={resetGame} className="primary-button blue">
                             Play Again | ಮತ್ತೆ ಪ್ಲೇ ಮಾಡಿ <RefreshCcw className="icon" size={18} />
                         </button>
                     </div>
@@ -638,13 +638,13 @@ const WorkplaceGame = () => {
 
     // Game Playing Screen
     return (
-        <div className="game-container">
+        <div className="game-container blue">
             <div className="game-card">
-                <div className="card-header">
+                <div className="card-header blue">
                     <h1>Q {currentScenario + 1}: {scenarios[ currentScenario ].title}</h1>
                     <h1>{scenarios[ currentScenario ].title_kan}</h1>
                     <div className="points-display">
-                        <div className="point-badge workplace-badge">
+                        <div className="point-badge primary-badge">
                             Current Score: {workplacePoints}
                         </div>
                     </div>
@@ -684,7 +684,7 @@ const WorkplaceGame = () => {
                         {scenarios[ currentScenario ].options.map((option, index) => (
                             <div
                                 key={index}
-                                className={`option-item ${selectedAnswer === index ? 'selected-option' : ''
+                                className={`option-item blue ${selectedAnswer === index ? 'selected-option' : ''
                                     } ${answerSubmitted && selectedAnswer === index ? 'submitted-option' : ''
                                     } ${answerSubmitted && selectedAnswer !== index ? 'faded-option' : ''
                                     }`}
@@ -732,7 +732,7 @@ const WorkplaceGame = () => {
                     <button
                         onClick={handleNextScenario}
                         disabled={selectedAnswer === null}
-                        className={`primary-button ${selectedAnswer === null ? 'disabled-button' : ''}`}
+                        className={`primary-button blue ${selectedAnswer === null ? 'disabled-button' : ''}`}
                     >
                         {answerSubmitted
                             ? currentScenario < scenarios.length - 1

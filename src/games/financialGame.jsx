@@ -440,11 +440,11 @@ const FinancialGame = () => {
     // Introduction Screen
     if (gameState === 'intro') {
         return (
-            <div className="game-container">
+            <div className="game-container orange">
                 <div className="game-card">
-                    <div className="card-header">
-                        <h1>Financial Literacy Game</h1>
-                        <h1>ಆರ್ಥಿಕ ಸಾಕ್ಷರತಾ ಆಟ</h1>
+                    <div className="card-header orange">
+                        <h1>Financial Literacy Quiz</h1>
+                        <h1>ಆರ್ಥಿಕ ಸಾಕ್ಷರತಾ ರಸಪ್ರಶ್ನೆ</h1>
                         <p>Learn to manage your finances</p>
                         <p>ನಿಮ್ಮ ಹಣಕಾಸನ್ನು ನಿರ್ವಹಿಸಲು ಕಲಿಯಿರಿ</p>
                     </div>
@@ -456,7 +456,7 @@ const FinancialGame = () => {
                             style={{ width: "100%", display: "block", marginBottom: "1.5rem", borderRadius: "8px" }}
                         />
                         <h2>Welcome! ಸ್ವಾಗತ!</h2>
-                        <p>This quiz will help you learn smart ways to handle your money every day. We'll ask you 10 questions about saving, spending, and planning for your future.</p>
+                        <p>This quiz will help you learn smart ways to handle your money every day. We&apos;ll ask you 10 questions about saving, spending, and planning for your future.</p>
                         <p>
                             ಈ ರಸಪ್ರಶ್ನೆಯು ಪ್ರತಿದಿನ ನಿಮ್ಮ ಹಣವನ್ನು ಹೇಗೆ ಬುದ್ಧಿವಂತಿಕೆಯಿಂದ ನಿರ್ವಹಿಸುವುದು ಎಂಬುದನ್ನು ಕಲಿಯಲು ನಿಮಗೆ ಸಹಾಯ ಮಾಡುತ್ತದೆ. ಉಳಿತಾಯ, ಖರ್ಚು ಮತ್ತು ನಿಮ್ಮ ಭವಿಷ್ಯದ ಯೋಜನೆ ಕುರಿತು ನಾವು ನಿಮಗೆ 10 ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳುತ್ತೇವೆ.
                         </p>
@@ -475,7 +475,7 @@ const FinancialGame = () => {
                             </ul>
                         </div>
 
-                        <button onClick={startGame} className="primary-button">
+                        <button onClick={startGame} className="primary-button orange">
                             Start Game| ಪ್ರಾರಂಭಿಸಿ<ArrowRight className="icon" size={18} />
                         </button>
                     </div>
@@ -490,10 +490,10 @@ const FinancialGame = () => {
         const totalPoints = financialPoints;
 
         return (
-            <div className="game-container">
+            <div className="game-container orange">
                 <div className="game-card results-card">
-                    <div className="card-header">
-                        <h1>Game Results</h1>
+                    <div className="card-header orange">
+                        <h1>Quiz Results</h1>
                     </div>
 
                     <div className="card-body">
@@ -535,7 +535,7 @@ const FinancialGame = () => {
                             ))}
                         </div>
 
-                        <button onClick={resetGame} className="primary-button">
+                        <button onClick={resetGame} className="primary-button orange">
                             Play Again | ಮತ್ತೆ ಪ್ಲೇ ಮಾಡಿ <RefreshCcw className="icon" size={18} />
                         </button>
                     </div>
@@ -546,13 +546,13 @@ const FinancialGame = () => {
 
     // Game Playing Screen
     return (
-        <div className="game-container">
+        <div className="game-container orange">
             <div className="game-card">
-                <div className="card-header">
+                <div className="card-header orange">
                     <h1>Q {currentScenario + 1}: {scenarios[ currentScenario ].title}</h1>
                     <h1>{scenarios[ currentScenario ].title_kan}</h1>
                     <div className="points-display">
-                        <div className="point-badge financial-badge">
+                        <div className="point-badge primary-badge">
                             Current Score: {financialPoints}
                         </div>
                     </div>
@@ -592,7 +592,7 @@ const FinancialGame = () => {
                         {scenarios[ currentScenario ].options.map((option, index) => (
                             <div
                                 key={index}
-                                className={`option-item ${selectedAnswer === index ? 'selected-option' : ''
+                                className={`option-item orange ${selectedAnswer === index ? 'selected-option' : ''
                                     } ${answerSubmitted && selectedAnswer === index ? 'submitted-option' : ''
                                     } ${answerSubmitted && selectedAnswer !== index ? 'faded-option' : ''
                                     }`}
@@ -640,7 +640,7 @@ const FinancialGame = () => {
                     <button
                         onClick={handleNextScenario}
                         disabled={selectedAnswer === null}
-                        className={`primary-button ${selectedAnswer === null ? 'disabled-button' : ''}`}
+                        className={`primary-button ${selectedAnswer === null ? 'disabled-button' : ''}  orange`}
                     >
                         {answerSubmitted
                             ? currentScenario < scenarios.length - 1

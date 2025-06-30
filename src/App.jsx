@@ -5,6 +5,7 @@ import GameCardsGrid from "./games/gameCards";
 import InclusionGame from "./games/inclusionGame";
 import FinancialGame from "./games/financialGame";
 import WorkplaceGame from "./games/workplaceGame";
+import PoshGame from "./games/poshGame";
 import Login from "./Login";
 import Admin from "./Admin";
 import PrivateRoutes from './utils/PrivateRoutes'
@@ -47,7 +48,7 @@ function App() {
           } />
           <Route path="/posh" element={
 
-            <h1>PoSH Game</h1>
+            <PoshGame />
 
           } />
         </Routes>

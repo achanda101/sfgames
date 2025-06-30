@@ -10,6 +10,18 @@
     transition: background 0.3s ease;
 }
 
+.game-container.orange {
+    background: linear-gradient(to bottom, #ffe5d5, #fdfedb);
+}
+
+.game-container.blue {
+    background: linear-gradient(to bottom, #c9e3ff, #dbf5fe);
+}
+
+.game-container.red {
+    background: linear-gradient(to bottom, #fec5c5, #ffdfdf);
+}
+
 /* Game Card */
 .game-card {
     max-width: 650px;
@@ -27,6 +39,18 @@
     padding: 1.5rem;
     color: white;
     transition: background 0.3s ease;
+}
+
+.card-header.orange {
+    background: linear-gradient(to right, #eb6838, #efb032);
+}
+
+.card-header.blue {
+    background: linear-gradient(to right, #388feb, #3edbf0);
+}
+
+.card-header.red {
+    background: linear-gradient(to right, #d73030, #ff5858);
 }
 
 .card-header h1 {
@@ -108,6 +132,18 @@
     transition: opacity 0.2s ease, background 0.3s ease;
 }
 
+.primary-button.orange {
+    background: linear-gradient(to right, #eb6838, #efb032);
+}
+
+.primary-button.blue {
+    background: linear-gradient(to right, #388feb, #3edbf0);
+}
+
+.primary-button.red {
+    background: linear-gradient(to right, #d73030, #ff5858);
+}
+
 .primary-button:hover {
     opacity: 0.9;
 }
@@ -116,6 +152,14 @@
     background: #d1d5db;
     color: #6b7280;
     cursor: not-allowed;
+}
+
+.disabled-button.orange {
+    color: #fff;
+}
+
+.disabled-button.red {
+    color: #fff;
 }
 
 .icon {
@@ -137,11 +181,11 @@
     transition: background-color 0.3s ease;
 }
 
-.inclusion-badge {
-    background-color: rgba(139, 92, 246, 0.3);
+.primary-badge {
+    background-color: rgba(56, 56, 56, 0.3);
 }
 
-.diversity-badge {
+.secondary-badge {
     background-color: rgba(59, 130, 246, 0.3);
 }
 
@@ -195,9 +239,36 @@
     border-color: #a78bfa;
 }
 
+.option-item:hover:not(.faded-option).orange {
+    border-color: #f6bd80;
+}
+
+.option-item:hover:not(.faded-option).blue {
+    border-color: #80c1f6;
+}
+
+.option-item:hover:not(.faded-option).red {
+    border-color: #e46565;
+}
+
 .selected-option {
     border-color: #8b5cf6;
     background-color: #f5f3ff;
+}
+
+.selected-option.orange {
+    border-color: #e76a3c;
+    background-color: #fbf1ea;
+}
+
+.selected-option.blue {
+    border-color: #329ee1;
+    background-color: #eaf5fb;
+}
+
+.selected-option.red {
+    border-color: #d72d2d;
+    background-color: #ffeded;
 }
 
 .submitted-option {

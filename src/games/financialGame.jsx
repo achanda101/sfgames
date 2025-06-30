@@ -1,28 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Award, RefreshCcw, Sun, Moon } from 'lucide-react';
+import { ArrowRight, Award, RefreshCcw } from 'lucide-react';
 import './game.css';
 
-// ThemeToggle Component
-const ThemeToggle = ({ isDarkMode, toggleDarkMode }) => {
-    return (
-        <div className="theme-toggle">
-            {isDarkMode ? (
-                <Moon className="theme-icon dark-icon" size={20} />
-            ) : (
-                <Sun className="theme-icon" size={20} />
-            )}
-            <label className="switch">
-                <input
-                    type="checkbox"
-                    checked={isDarkMode}
-                    onChange={toggleDarkMode}
-                    aria-label="Toggle dark mode"
-                />
-                <span className="slider"></span>
-            </label>
-        </div>
-    );
-};
+
 
 const FinancialGame = () => {
     const [ gameState, setGameState ] = useState('intro');
@@ -33,7 +13,6 @@ const FinancialGame = () => {
     const [ selectedAnswer, setSelectedAnswer ] = useState(null);
     const [ answerSubmitted, setAnswerSubmitted ] = useState(false);
     const [ scenarioResponses, setScenarioResponses ] = useState([]);
-    const [ isDarkMode, setIsDarkMode ] = useState(false);
 
     // Use refs to track the latest values for calculations
     const financialPointsRef = useRef(financialPoints);
@@ -45,41 +24,6 @@ const FinancialGame = () => {
         diversityPointsRef.current = diversityPoints;
     }, [ financialPoints, diversityPoints ]);
 
-    // Check for user's preferred color scheme initially
-    useEffect(() => {
-        // Check for a stored preference first
-        const storedTheme = localStorage.getItem('theme');
-        if (storedTheme) {
-            setIsDarkMode(storedTheme === 'dark');
-        } else {
-            // Fall back to system preference
-            const darkModePreference = window.matchMedia('(prefers-color-scheme: dark)');
-            setIsDarkMode(darkModePreference.matches);
-
-            const handleChange = (e) => {
-                setIsDarkMode(e.matches);
-            };
-
-            darkModePreference.addEventListener('change', handleChange);
-            return () => darkModePreference.removeEventListener('change', handleChange);
-        }
-    }, []);
-
-    // Save theme preference when it changes
-    useEffect(() => {
-        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-
-        // Optional: Apply a body class for global styles if needed
-        if (isDarkMode) {
-            document.body.classList.add('dark-theme');
-        } else {
-            document.body.classList.remove('dark-theme');
-        }
-    }, [ isDarkMode ]);
-
-    const toggleDarkMode = () => {
-        setIsDarkMode(!isDarkMode);
-    };
 
     const scenarios = [
         {
@@ -479,10 +423,9 @@ const FinancialGame = () => {
     // Introduction Screen
     if (gameState === 'intro') {
         return (
-            <div className={`game-container ${isDarkMode ? 'dark-mode' : ''}`}>
+            <div className="game-container">
                 <div className="game-card">
                     <div className="card-header">
-                        <ThemeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
                         <h1>Financial Literacy Game</h1>
                         <p>Learn to manage your finances</p>
                     </div>
@@ -524,10 +467,9 @@ const FinancialGame = () => {
         const totalPoints = financialPoints + diversityPoints + equityPoints;
 
         return (
-            <div className={`game-container ${isDarkMode ? 'dark-mode' : ''}`}>
+            <div className="game-container">
                 <div className="game-card results-card">
                     <div className="card-header">
-                        <ThemeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
                         <h1>Game Results</h1>
                     </div>
 
@@ -586,10 +528,9 @@ const FinancialGame = () => {
 
     // Game Playing Screen
     return (
-        <div className={`game-container ${isDarkMode ? 'dark-mode' : ''}`}>
+        <div className="game-container">
             <div className="game-card">
                 <div className="card-header">
-                    <ThemeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
                     <h1>Scenario {currentScenario + 1}: {scenarios[ currentScenario ].title}</h1>
                     <div className="points-display">
                         <div className="point-badge financial-badge">

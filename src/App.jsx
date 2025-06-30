@@ -25,45 +25,44 @@ const MainLayout = ({ children }) => {
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <MainLayout>
+      {/* <AuthProvider> */}
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={
+            < GameCardsGrid />
+          } />
+          <Route path="/inclusion" element={
+            < InclusionGame />
+          } />
+          <Route path="/financial" element={
+
+            <FinancialGame />
+
+          } />
+          <Route path="/workplace" element={
+
+            <h1>Work Etiquette Game</h1>
+
+          } />
+          <Route path="/posh" element={
+
+            <h1>PoSH Game</h1>
+
+          } />
+        </Routes>
+        <AuthProvider>
           <Routes>
-            <Route path="/" element={
-              < GameCardsGrid />
-            } />
-            <Route path="/inclusion" element={
-              < InclusionGame />
-            } />
-            <Route path="/financial" element={
-
-              <FinancialGame />
-
-            } />
-            <Route path="/workplace" element={
-
-              <h1>Work Etiquette Game</h1>
-
-            } />
-            <Route path="/posh" element={
-
-              <h1>PoSH Game</h1>
-
-            } />
             <Route path="/login" element={
-
               < Login />
-
             } />
             <Route element={<PrivateRoutes />}>
               <Route path="/admin" element={
-
                 < Admin />
-
               } />
             </Route>
           </Routes>
-        </MainLayout>
-      </AuthProvider>
+        </AuthProvider>
+      </MainLayout>
       <ToastContainer />
     </Router>
   )

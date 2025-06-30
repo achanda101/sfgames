@@ -25,36 +25,33 @@ const MainLayout = ({ children }) => {
 function App() {
   return (
     <Router>
-
-      <Routes>
-        <Route path="/" element={
-          <MainLayout>
-            < GameCardsGrid />
-          </MainLayout>
-        } />
-        <Route path="/inclusion" element={
-          <MainLayout>
-            < InclusionGame />
-          </MainLayout>
-        } />
-        <Route path="/financial" element={
-          <MainLayout>
-            <FinancialGame />
-          </MainLayout>
-        } />
-        <Route path="/workplace" element={
-          <MainLayout>
-            <h1>Work Etiquette Game</h1>
-          </MainLayout>
-        } />
-        <Route path="/posh" element={
-          <MainLayout>
-            <h1>PoSH Game</h1>
-          </MainLayout>
-        } />
-      </Routes>
       <AuthProvider>
         <Routes>
+          <Route path="/" element={
+            <MainLayout>
+              < GameCardsGrid />
+            </MainLayout>
+          } />
+          <Route path="/inclusion" element={
+            <MainLayout>
+              < InclusionGame />
+            </MainLayout>
+          } />
+          <Route path="/financial" element={
+            <MainLayout>
+              <FinancialGame />
+            </MainLayout>
+          } />
+          <Route path="/workplace" element={
+            <MainLayout>
+              <h1>Work Etiquette Game</h1>
+            </MainLayout>
+          } />
+          <Route path="/posh" element={
+            <MainLayout>
+              <h1>PoSH Game</h1>
+            </MainLayout>
+          } />
           <Route path="/login" element={
             <MainLayout>
               < Login />

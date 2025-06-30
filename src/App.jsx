@@ -32,9 +32,7 @@ function App() {
           < GameCardsGrid />
         } />
         <Route path="/inclusion" element={
-
-          <h1>Inclusion & Diversity Quiz</h1>
-
+          < InclusionGame />
         } />
         <Route path="/financial" element={
 

@@ -1,6 +1,8 @@
+import { Link } from 'react-router-dom'
+
 const GameCard = ({ title, link, img }) => {
     return (
-        <a href={link} className="block w-full max-w-xs">
+        <Link to={link} className="block w-full max-w-xs">
             <div className="bg-white rounded-lg shadow-lg hover:shadow-sm active:shadow-sm transition-shadow duration-200 ease-in-out cursor-pointer border border-gray-200 overflow-hidden w-full h-48">
                 <div className="flex flex-col h-full">
                     <div className="w-full h-32 bg-gray-100 border-b border-gray-200 flex items-center justify-center flex-shrink-0">
@@ -18,7 +20,7 @@ const GameCard = ({ title, link, img }) => {
                     </div>
                 </div>
             </div>
-        </a>
+        </Link>
     );
 };
 

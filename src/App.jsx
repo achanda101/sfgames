@@ -33,7 +33,7 @@ function App() {
         } />
         <Route path="/inclusion" element={
 
-          < InclusionGame />
+          <h1>Inclusion & Diversity Quiz</h1>
 
         } />
         <Route path="/financial" element={

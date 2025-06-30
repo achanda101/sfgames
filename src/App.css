@@ -48,3 +48,99 @@ body {
   color: #333;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Loading Spinner */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+  position: relative;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Optional variation: dual-color spinner */
+.spinner-dual {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  border-bottom-color: #e74c3c;
+  animation: spin 1.5s ease-in-out infinite;
+  margin: 20px auto;
+}
+
+/* Optional variation: pulsing spinner */
+.spinner-pulse {
+  width: 50px;
+  height: 50px;
+  background-color: #3498db;
+  border-radius: 50%;
+  margin: 20px auto;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+}
+
+/* Optional variation: dots spinner */
+.spinner-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  width: 80px;
+}
+
+.spinner-dots div {
+  width: 12px;
+  height: 12px;
+  background-color: #3498db;
+  border-radius: 50%;
+  margin: 0 5px;
+  animation: dots 1.4s ease-in-out infinite;
+}
+
+.spinner-dots div:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.spinner-dots div:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes dots {
+
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+
+  40% {
+    transform: scale(1);
+  }
+}

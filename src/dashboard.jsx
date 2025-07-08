@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, Users, Trophy, Clock, Monitor, Globe, Calendar } from 'lucide-react';
+import './games/game.css';
 // import { databases, DATABASE_ID, COLLECTIONS, Query } from './appwriteConfig';
 
 // Mock QuizAnalytics for demonstration purposes

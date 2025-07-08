@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Award, RefreshCcw } from 'lucide-react';
+import QuizAnalytics from '../utils/QuizAnalytics.js';
 import './game.css';
 
 
@@ -12,6 +13,9 @@ const InclusionGame = () => {
     const [ selectedAnswer, setSelectedAnswer ] = useState(null);
     const [ answerSubmitted, setAnswerSubmitted ] = useState(false);
     const [ scenarioResponses, setScenarioResponses ] = useState([]);
+    // For Quiz Analytics
+    const [ sessionId, setSessionId ] = useState(null);
+    const [ questionStartTime, setQuestionStartTime ] = useState(null);
 
     // Use refs to track the latest values for calculations
     const inclusionPointsRef = useRef(inclusionPoints);
@@ -299,7 +303,7 @@ const InclusionGame = () => {
     };
 
     // FIXED FUNCTION to properly handle scenario progression and score calculation
-    const handleNextScenario = () => {
+    const handleNextScenario = async () => {
         // If an answer hasn't been submitted yet and an option is selected
         if (!answerSubmitted && selectedAnswer !== null) {
             // Get the selected option for the current scenario
@@ -328,12 +332,44 @@ const InclusionGame = () => {
         }
         // If an answer has already been submitted, move to next scenario or results
         else if (answerSubmitted) {
+            // Calculate time taken for THIS question only (not total game time)
+            const timeTaken = questionStartTime ? Math.round((Date.now() - questionStartTime) / 1000) : 0;
+            console.log(`⏰ Question ${currentScenario + 1} took ${timeTaken} seconds to answer`);
+            const pointsArr = [ inclusionPointsRef.current, diversityPointsRef.current ]
+
+            // Record the response
+            if (sessionId) {
+                await QuizAnalytics.recordResponse(
+                    sessionId,
+                    currentScenario,
+                    scenarios[ currentScenario ].id,
+                    selectedAnswer,
+                    0,
+                    timeTaken,
+                    scenarios[ currentScenario ].title,
+                    pointsArr
+                );
+
+                alert("record response done")
+
+                // Update session progress
+                await QuizAnalytics.updateSessionProgress(
+                    sessionId,
+                    currentScenario + 1,
+                    0,
+                    currentScenario + 1,
+                    pointsArr
+                );
+            }
+
             // Check if there are more scenarios to show
             if (currentScenario < scenarios.length - 1) {
                 // Move to the next scenario
                 setCurrentScenario(prevScenario => prevScenario + 1);
                 setSelectedAnswer(null);
                 setAnswerSubmitted(false);
+                // IMPORTANT: Reset the timer for the next question
+                setQuestionStartTime(Date.now());
             } else {
                 // We're at the last scenario, calculate equity points and show results
 
@@ -353,10 +389,16 @@ const InclusionGame = () => {
                 console.log(`Inclusion: ${currentInclusion}`);
                 console.log(`Diversity: ${currentDiversity}`);
                 console.log(`Equity: ${finalEquityPoints}`);
-                console.log(`Total: ${currentInclusion + currentDiversity + finalEquityPoints}`);
+                const finalScore = currentInclusion + currentDiversity + finalEquityPoints
+                console.log(`Total: ${finalScore}`);
 
                 // Update equity points and change game state
                 setEquityPoints(finalEquityPoints);
+
+                if (sessionId) {
+                    await QuizAnalytics.completeQuizSession(sessionId, finalScore, currentInclusion, currentDiversity, finalEquityPoints);
+                }
+
                 setGameState('results');
             }
         }
@@ -412,9 +454,11 @@ const InclusionGame = () => {
         setScenarioResponses([]);
     };
 
-    const startGame = () => {
+    const startGame = async () => {
+        const newSessionId = await QuizAnalytics.startQuizSession('inclusion');
+        setSessionId(newSessionId);
+        setQuestionStartTime(Date.now()); // Track when first question starts
         setGameState('playing');
-        // Record timestamp, geographic region, game ID
     };
 
     // Calculate progress percentage

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Award, RefreshCcw } from 'lucide-react';
+import QuizAnalytics from '../utils/QuizAnalytics.js';
 import './game.css';
 
 
@@ -11,6 +12,9 @@ const PoshGame = () => {
     const [ selectedAnswer, setSelectedAnswer ] = useState(null);
     const [ answerSubmitted, setAnswerSubmitted ] = useState(false);
     const [ scenarioResponses, setScenarioResponses ] = useState([]);
+    // For Quiz Analytics
+    const [ sessionId, setSessionId ] = useState(null);
+    const [ questionStartTime, setQuestionStartTime ] = useState(null);
 
     // Use refs to track the latest values for calculations
     const poshPointsRef = useRef(poshPoints);
@@ -419,7 +423,7 @@ const PoshGame = () => {
     };
 
     // FIXED FUNCTION to properly handle scenario progression and score calculation
-    const handleNextScenario = () => {
+    const handleNextScenario = async () => {
         // If an answer hasn't been submitted yet and an option is selected
         if (!answerSubmitted && selectedAnswer !== null) {
             // Get the selected option for the current scenario
@@ -448,14 +452,44 @@ const PoshGame = () => {
         }
         // If an answer has already been submitted, move to next scenario or results
         else if (answerSubmitted) {
+            // Calculate time taken for THIS question only (not total game time)
+            const timeTaken = questionStartTime ? Math.round((Date.now() - questionStartTime) / 1000) : 0;
+            console.log(`⏰ Question ${currentScenario + 1} took ${timeTaken} seconds to answer`);
+            const pointsArr = [ 0, 0 ]
+
+            // Record the response
+            if (sessionId) {
+                await QuizAnalytics.recordResponse(
+                    sessionId,
+                    currentScenario,
+                    scenarios[ currentScenario ].id,
+                    selectedAnswer,
+                    poshPointsRef.current,
+                    timeTaken,
+                    scenarios[ currentScenario ].title,
+                    pointsArr
+                );
+
+                // Update session progress
+                await QuizAnalytics.updateSessionProgress(
+                    sessionId,
+                    currentScenario + 1,
+                    poshPointsRef.current,
+                    currentScenario + 1,
+                    pointsArr
+                );
+            }
+
             // Check if there are more scenarios to show
             if (currentScenario < scenarios.length - 1) {
                 // Move to the next scenario
                 setCurrentScenario(prevScenario => prevScenario + 1);
                 setSelectedAnswer(null);
                 setAnswerSubmitted(false);
+                // IMPORTANT: Reset the timer for the next question
+                setQuestionStartTime(Date.now());
             } else {
-                // We're at the last scenario, calculate equity points and show results
+                // We're at the last scenario, calculate final results
 
                 // Use the refs to ensure we have the latest values
                 const currentposh = poshPointsRef.current;
@@ -463,6 +497,10 @@ const PoshGame = () => {
                 // Log the final calculations for debugging
                 console.log("Final calculation:");
                 console.log(`Total: ${currentposh}`);
+
+                if (sessionId) {
+                    await QuizAnalytics.completeQuizSession(sessionId, currentposh, 0, 0, 0);
+                }
 
                 setGameState('results');
             }
@@ -524,7 +562,10 @@ const PoshGame = () => {
         setScenarioResponses([]);
     };
 
-    const startGame = () => {
+    const startGame = async () => {
+        const newSessionId = await QuizAnalytics.startQuizSession('posh');
+        setSessionId(newSessionId);
+        setQuestionStartTime(Date.now()); // Track when first question starts
         setGameState('playing');
     };
 

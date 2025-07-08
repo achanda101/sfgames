@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Award, RefreshCcw } from 'lucide-react';
 import QuizAnalytics from '../utils/QuizAnalytics.js';
+// import { runDiagnostics } from '../appwriteConfig.js';
 import './game.css';
 
 
@@ -14,7 +15,7 @@ const FinancialGame = () => {
     const [ scenarioResponses, setScenarioResponses ] = useState([]);
     // For Quiz Analytics
     const [ sessionId, setSessionId ] = useState(null);
-    const [ startTime, setStartTime ] = useState(null);
+    const [ questionStartTime, setQuestionStartTime ] = useState(null);
 
     // Use refs to track the latest values for calculations
     const financialPointsRef = useRef(financialPoints);
@@ -23,6 +24,20 @@ const FinancialGame = () => {
     useEffect(() => {
         financialPointsRef.current = financialPoints;
     }, [ financialPoints ]);
+    // DEBUGGING APPWRITE COLLECTION ID
+    // useEffect(() => {
+    //     const testEverything = async () => {
+    //         const success = await runDiagnostics();
+    //         if (success) {
+    //             console.log('🎉 All tests passed! Analytics should work.');
+    //         } else {
+    //             console.log('🚨 Some tests failed. Check the logs above.');
+    //         }
+    //     };
+
+    //     testEverything();
+    // }, []);
+
 
 
     const scenarios = [
@@ -358,7 +373,11 @@ const FinancialGame = () => {
         }
         // If an answer has already been submitted, move to next scenario or results
         else if (answerSubmitted) {
-            const timeTaken = Math.round((Date.now() - startTime) / 1000);
+            // Calculate time taken for THIS question only (not total game time)
+            const timeTaken = questionStartTime ? Math.round((Date.now() - questionStartTime) / 1000) : 0;
+            console.log(`⏰ Question ${currentScenario + 1} took ${timeTaken} seconds to answer`);
+            const pointsArr = [ 0, 0 ]
+
             // Record the response
             if (sessionId) {
                 await QuizAnalytics.recordResponse(
@@ -366,16 +385,21 @@ const FinancialGame = () => {
                     currentScenario,
                     scenarios[ currentScenario ].id,
                     selectedAnswer,
-                    scenarios[ currentScenario ].options[ selectedAnswer ].points,
-                    timeTaken
+                    financialPointsRef.current,
+                    timeTaken,
+                    scenarios[ currentScenario ].title,
+                    pointsArr
                 );
+
+                alert("record response done")
 
                 // Update session progress
                 await QuizAnalytics.updateSessionProgress(
                     sessionId,
                     currentScenario + 1,
                     financialPointsRef.current,
-                    currentScenario + 1
+                    currentScenario + 1,
+                    pointsArr
                 );
             }
 
@@ -385,8 +409,10 @@ const FinancialGame = () => {
                 setCurrentScenario(prevScenario => prevScenario + 1);
                 setSelectedAnswer(null);
                 setAnswerSubmitted(false);
+                // IMPORTANT: Reset the timer for the next question
+                setQuestionStartTime(Date.now());
             } else {
-                // We're at the last scenario, calculate equity points and show results
+                // We're at the last scenario, calculate final results
 
                 // Use the refs to ensure we have the latest values
                 const currentFinancial = financialPointsRef.current;
@@ -396,7 +422,7 @@ const FinancialGame = () => {
                 console.log(`Total: ${currentFinancial}`);
 
                 if (sessionId) {
-                    await QuizAnalytics.completeQuizSession(sessionId, currentFinancial);
+                    await QuizAnalytics.completeQuizSession(sessionId, currentFinancial, 0, 0, 0);
                 }
 
                 setGameState('results');
@@ -461,9 +487,8 @@ const FinancialGame = () => {
 
     const startGame = async () => {
         const newSessionId = await QuizAnalytics.startQuizSession('financial');
-        alert("started new Session" + newSessionId)
         setSessionId(newSessionId);
-        setStartTime(Date.now());
+        setQuestionStartTime(Date.now()); // Track when first question starts
         setGameState('playing');
     };
 

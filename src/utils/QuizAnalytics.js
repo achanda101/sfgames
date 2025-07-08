@@ -4,25 +4,23 @@ import { toast } from "react-toastify";
 class QuizAnalytics {
     static async startQuizSession(quizType) {
         try {
-            const geolocation = await this.getCurrentLocation();
+            // const geolocation = await this.getCurrentLocation();
             const playerMetadata = this.getPlayerMetadata();
 
             // Prepare geolocation fields
-            const geoFields = geolocation ? {
-                geo_latitude: geolocation.latitude,
-                geo_longitude: geolocation.longitude,
-                geo_city: geolocation.city || null,
-                geo_country: geolocation.country || null,
-                geo_accuracy: geolocation.accuracy,
-                geo_timestamp: geolocation.timestamp
-            } : {
-                geo_latitude: null,
-                geo_longitude: null,
-                geo_city: null,
-                geo_country: null,
-                geo_accuracy: null,
-                geo_timestamp: null
-            };
+            // const geoFields = geolocation ? {
+            //     geo_latitude: geolocation.latitude,
+            //     geo_longitude: geolocation.longitude,
+            //     geo_city: geolocation.city || null,
+            //     geo_country: geolocation.country || null,
+            //     geo_timestamp: geolocation.timestamp
+            // } : {
+            //     geo_latitude: null,
+            //     geo_longitude: null,
+            //     geo_city: null,
+            //     geo_country: null,
+            //     geo_timestamp: null
+            // };
 
             const session = await databases.createDocument(
                 DATABASE_ID,
@@ -34,8 +32,9 @@ class QuizAnalytics {
                     is_completed: false,
                     current_question: 0,
                     current_score: 10,
+                    current_score_arr: [ 10, 10 ],
                     total_questions_answered: 0,
-                    ...geoFields,
+                    // ...geoFields,
                     player_user_agent: playerMetadata.user_agent,
                     player_language: playerMetadata.language,
                     player_timezone: playerMetadata.timezone,
@@ -53,7 +52,7 @@ class QuizAnalytics {
     }
 
     // Update session progress
-    static async updateSessionProgress(sessionId, questionNumber, currentScore, totalAnswered) {
+    static async updateSessionProgress(sessionId, questionNumber, currentScore, totalAnswered, currentScoreArr) {
         try {
             await databases.updateDocument(
                 DATABASE_ID,
@@ -62,6 +61,7 @@ class QuizAnalytics {
                 {
                     current_question: questionNumber,
                     current_score: currentScore,
+                    current_score_arr: currentScoreArr,
                     total_questions_answered: totalAnswered,
                     updated_at: new Date().toISOString()
                 }
@@ -72,7 +72,7 @@ class QuizAnalytics {
     }
 
     // Complete quiz session
-    static async completeQuizSession(sessionId, finalScore) {
+    static async completeQuizSession(sessionId, finalScore, finalInclusionScore, finalDiversityScore, finalEquityScore) {
         try {
             await databases.updateDocument(
                 DATABASE_ID,
@@ -82,7 +82,10 @@ class QuizAnalytics {
                     session_end_time: new Date().toISOString(),
                     is_completed: true,
                     final_score: finalScore,
-                    updated_at: new Date().toISOString()
+                    updated_at: new Date().toISOString(),
+                    final_inclusion_score: finalInclusionScore,
+                    final_diversity_score: finalDiversityScore,
+                    final_equity_score: finalEquityScore
                 }
             );
         } catch (error) {
@@ -91,7 +94,7 @@ class QuizAnalytics {
     }
 
     // Record individual response
-    static async recordResponse(sessionId, questionNumber, scenarioId, optionIndex, pointsEarned, timeTaken) {
+    static async recordResponse(sessionId, questionNumber, optionIndex, pointsEarned, timeTaken, questionText, pointsEarnedArr) {
         try {
             await databases.createDocument(
                 DATABASE_ID,
@@ -100,10 +103,11 @@ class QuizAnalytics {
                 {
                     session_id: sessionId,
                     question_number: questionNumber,
-                    scenario_id: scenarioId,
                     selected_option_index: optionIndex,
                     points_earned: pointsEarned,
+                    points_earned_arr: pointsEarnedArr,
                     time_taken_seconds: timeTaken,
+                    question_text: questionText,
                     response_timestamp: new Date().toISOString(),
                     created_at: new Date().toISOString()
                 }

@@ -334,23 +334,19 @@ const InclusionGame = () => {
         else if (answerSubmitted) {
             // Calculate time taken for THIS question only (not total game time)
             const timeTaken = questionStartTime ? Math.round((Date.now() - questionStartTime) / 1000) : 0;
-            console.log(`⏰ Question ${currentScenario + 1} took ${timeTaken} seconds to answer`);
-            const pointsArr = [ inclusionPointsRef.current, diversityPointsRef.current ]
 
             // Record the response
             if (sessionId) {
                 await QuizAnalytics.recordResponse(
                     sessionId,
                     currentScenario,
-                    scenarios[ currentScenario ].id,
                     selectedAnswer,
                     0,
                     timeTaken,
                     scenarios[ currentScenario ].title,
-                    pointsArr
+                    [ inclusionPoints,
+                        diversityPoints ]
                 );
-
-                alert("record response done")
 
                 // Update session progress
                 await QuizAnalytics.updateSessionProgress(
@@ -358,7 +354,8 @@ const InclusionGame = () => {
                     currentScenario + 1,
                     0,
                     currentScenario + 1,
-                    pointsArr
+                    [ inclusionPoints,
+                        diversityPoints ]
                 );
             }
 

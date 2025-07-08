@@ -52,7 +52,12 @@ class QuizAnalytics {
     }
 
     // Update session progress
-    static async updateSessionProgress(sessionId, questionNumber, currentScore, totalAnswered, currentScoreArr) {
+    static async updateSessionProgress(
+        sessionId,
+        questionNumber,
+        currentScore,
+        totalAnswered,
+        currentScoreArr) {
         try {
             await databases.updateDocument(
                 DATABASE_ID,
@@ -67,6 +72,7 @@ class QuizAnalytics {
                 }
             );
         } catch (error) {
+            toast.error(`Error updating session progress: ${error}`, { position: "bottom-right" });
             console.error('Error updating session progress:', error);
         }
     }
@@ -89,12 +95,21 @@ class QuizAnalytics {
                 }
             );
         } catch (error) {
+            toast.error(`Error completing quiz session: ${error}`, { position: "bottom-right" });
             console.error('Error completing quiz session:', error);
         }
     }
 
     // Record individual response
-    static async recordResponse(sessionId, questionNumber, optionIndex, pointsEarned, timeTaken, questionText, pointsEarnedArr) {
+    static async recordResponse(
+        sessionId,
+        questionNumber,
+        optionIndex,
+        pointsEarned,
+        timeTaken,
+        questionText,
+        pointsEarnedArr) {
+
         try {
             await databases.createDocument(
                 DATABASE_ID,
@@ -113,6 +128,7 @@ class QuizAnalytics {
                 }
             );
         } catch (error) {
+            toast.error(`Error recording response: ${error}`, { position: "bottom-right" });
             console.error('Error recording response:', error);
         }
     }
@@ -132,6 +148,7 @@ class QuizAnalytics {
 
             return this.processAnalytics(sessions.documents);
         } catch (error) {
+            toast.error(`Error fetching analytics: ${error}`, { position: "bottom-right" });
             console.error('Error fetching analytics:', error);
             return null;
         }

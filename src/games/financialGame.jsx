@@ -375,23 +375,18 @@ const FinancialGame = () => {
         else if (answerSubmitted) {
             // Calculate time taken for THIS question only (not total game time)
             const timeTaken = questionStartTime ? Math.round((Date.now() - questionStartTime) / 1000) : 0;
-            console.log(`⏰ Question ${currentScenario + 1} took ${timeTaken} seconds to answer`);
-            const pointsArr = [ 0, 0 ]
 
             // Record the response
             if (sessionId) {
                 await QuizAnalytics.recordResponse(
                     sessionId,
                     currentScenario,
-                    scenarios[ currentScenario ].id,
                     selectedAnswer,
                     financialPointsRef.current,
                     timeTaken,
                     scenarios[ currentScenario ].title,
-                    pointsArr
+                    [ 0, 0 ]
                 );
-
-                alert("record response done")
 
                 // Update session progress
                 await QuizAnalytics.updateSessionProgress(
@@ -399,7 +394,7 @@ const FinancialGame = () => {
                     currentScenario + 1,
                     financialPointsRef.current,
                     currentScenario + 1,
-                    pointsArr
+                    [ 0, 0 ]
                 );
             }
 

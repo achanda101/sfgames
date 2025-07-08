@@ -454,20 +454,17 @@ const WorkplaceGame = () => {
         else if (answerSubmitted) {
             // Calculate time taken for THIS question only (not total game time)
             const timeTaken = questionStartTime ? Math.round((Date.now() - questionStartTime) / 1000) : 0;
-            console.log(`⏰ Question ${currentScenario + 1} took ${timeTaken} seconds to answer`);
-            const pointsArr = [ 0, 0 ]
 
             // Record the response
             if (sessionId) {
                 await QuizAnalytics.recordResponse(
                     sessionId,
                     currentScenario,
-                    scenarios[ currentScenario ].id,
                     selectedAnswer,
                     workplacePointsRef.current,
                     timeTaken,
                     scenarios[ currentScenario ].title,
-                    pointsArr
+                    [ 0, 0 ]
                 );
 
                 // Update session progress
@@ -476,7 +473,7 @@ const WorkplaceGame = () => {
                     currentScenario + 1,
                     workplacePointsRef.current,
                     currentScenario + 1,
-                    pointsArr
+                    [ 0, 0 ]
                 );
             }
 

@@ -6,10 +6,6 @@ import InclusionGame from "./games/inclusionGame";
 import FinancialGame from "./games/financialGame";
 import WorkplaceGame from "./games/workplaceGame";
 import PoshGame from "./games/poshGame";
-import Login from "./Login";
-import Admin from "./Admin";
-import PrivateRoutes from './utils/PrivateRoutes'
-import { AuthProvider } from './utils/AuthContext'
 import './App.css'
 
 const MainLayout = ({ children }) => {
@@ -27,7 +23,6 @@ const MainLayout = ({ children }) => {
 function App() {
   return (
     <Router>
-      {/* <AuthProvider> */}
       <MainLayout>
         <Routes>
           <Route path="/" element={
@@ -52,18 +47,6 @@ function App() {
 
           } />
         </Routes>
-        <AuthProvider>
-          <Routes>
-            <Route path="/login" element={
-              < Login />
-            } />
-            <Route element={<PrivateRoutes />}>
-              <Route path="/admin" element={
-                < Admin />
-              } />
-            </Route>
-          </Routes>
-        </AuthProvider>
       </MainLayout>
       <ToastContainer />
     </Router>

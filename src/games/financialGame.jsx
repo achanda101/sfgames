@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Award, RefreshCcw } from 'lucide-react';
+import QuizAnalytics from '../utils/QuizAnalytics.js';
 import './game.css';
 
 
@@ -11,6 +12,9 @@ const FinancialGame = () => {
     const [ selectedAnswer, setSelectedAnswer ] = useState(null);
     const [ answerSubmitted, setAnswerSubmitted ] = useState(false);
     const [ scenarioResponses, setScenarioResponses ] = useState([]);
+    // For Quiz Analytics
+    const [ sessionId, setSessionId ] = useState(null);
+    const [ startTime, setStartTime ] = useState(null);
 
     // Use refs to track the latest values for calculations
     const financialPointsRef = useRef(financialPoints);
@@ -325,7 +329,7 @@ const FinancialGame = () => {
     };
 
     // FIXED FUNCTION to properly handle scenario progression and score calculation
-    const handleNextScenario = () => {
+    const handleNextScenario = async () => {
         // If an answer hasn't been submitted yet and an option is selected
         if (!answerSubmitted && selectedAnswer !== null) {
             // Get the selected option for the current scenario
@@ -354,6 +358,27 @@ const FinancialGame = () => {
         }
         // If an answer has already been submitted, move to next scenario or results
         else if (answerSubmitted) {
+            const timeTaken = Math.round((Date.now() - startTime) / 1000);
+            // Record the response
+            if (sessionId) {
+                await QuizAnalytics.recordResponse(
+                    sessionId,
+                    currentScenario,
+                    scenarios[ currentScenario ].id,
+                    selectedAnswer,
+                    scenarios[ currentScenario ].options[ selectedAnswer ].points,
+                    timeTaken
+                );
+
+                // Update session progress
+                await QuizAnalytics.updateSessionProgress(
+                    sessionId,
+                    currentScenario + 1,
+                    financialPointsRef.current,
+                    currentScenario + 1
+                );
+            }
+
             // Check if there are more scenarios to show
             if (currentScenario < scenarios.length - 1) {
                 // Move to the next scenario
@@ -369,6 +394,10 @@ const FinancialGame = () => {
                 // Log the final calculations for debugging
                 console.log("Final calculation:");
                 console.log(`Total: ${currentFinancial}`);
+
+                if (sessionId) {
+                    await QuizAnalytics.completeQuizSession(sessionId, currentFinancial);
+                }
 
                 setGameState('results');
             }
@@ -430,7 +459,10 @@ const FinancialGame = () => {
         setScenarioResponses([]);
     };
 
-    const startGame = () => {
+    const startGame = async () => {
+        const sessionId = await QuizAnalytics.startQuizSession('inclusion');
+        setSessionId(sessionId);
+        setStartTime(Date.now());
         setGameState('playing');
     };
 

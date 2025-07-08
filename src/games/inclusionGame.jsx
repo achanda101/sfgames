@@ -414,6 +414,7 @@ const InclusionGame = () => {
 
     const startGame = () => {
         setGameState('playing');
+        // Record timestamp, geographic region, game ID
     };
 
     // Calculate progress percentage

@@ -6,7 +6,9 @@ import InclusionGame from "./games/inclusionGame";
 import FinancialGame from "./games/financialGame";
 import WorkplaceGame from "./games/workplaceGame";
 import PoshGame from "./games/poshGame";
+import QuizDashboard from "./dashboard";
 import './App.css'
+
 
 const MainLayout = ({ children }) => {
   const location = useLocation();
@@ -44,6 +46,11 @@ function App() {
           <Route path="/posh" element={
 
             <PoshGame />
+
+          } />
+          <Route path="/dashboard" element={
+
+            <QuizDashboard />
 
           } />
         </Routes>

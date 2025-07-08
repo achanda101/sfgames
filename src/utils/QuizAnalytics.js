@@ -40,6 +40,7 @@ class QuizAnalytics {
                     player_language: playerMetadata.language,
                     player_timezone: playerMetadata.timezone,
                     player_screen_resolution: playerMetadata.screen_resolution,
+                    player_os: playerMetadata.os,
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 }
@@ -221,8 +222,24 @@ class QuizAnalytics {
             user_agent: navigator.userAgent,
             language: navigator.language,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            screen_resolution: `${screen.width}x${screen.height}`
+            screen_resolution: `${screen.width}x${screen.height}`,
+            os: this.getOSName()
         };
+    }
+
+    // Get OS name from user agent
+    static getOSName() {
+        const userAgent = navigator.userAgent;
+
+        if (userAgent.includes('Windows NT')) return 'Windows';
+        if (userAgent.includes('Mac OS X')) return 'macOS';
+        if (userAgent.includes('Linux')) return 'Linux';
+        if (userAgent.includes('Android')) return 'Android';
+        if (userAgent.includes('iOS')) return 'iOS';
+        if (userAgent.includes('iPhone')) return 'iOS';
+        if (userAgent.includes('iPad')) return 'iOS';
+
+        return 'Unknown';
     }
 }
 

@@ -460,8 +460,9 @@ const FinancialGame = () => {
     };
 
     const startGame = async () => {
-        const sessionId = await QuizAnalytics.startQuizSession('inclusion');
-        setSessionId(sessionId);
+        const newSessionId = await QuizAnalytics.startQuizSession('financial');
+        alert("started new Session" + newSessionId)
+        setSessionId(newSessionId);
         setStartTime(Date.now());
         setGameState('playing');
     };

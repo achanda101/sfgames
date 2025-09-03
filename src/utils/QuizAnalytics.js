@@ -154,6 +154,47 @@ class QuizAnalytics {
         }
     }
 
+    // Get detailed question responses for a specific quiz type
+    static async getQuestionAnalytics(quizType, startDate, endDate) {
+        try {
+            // First get all sessions for this quiz type
+            const sessions = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTIONS.QUIZ_SESSIONS,
+                [
+                    Query.equal('quiz_type', quizType),
+                    Query.greaterThanEqual('created_at', startDate),
+                    Query.lessThanEqual('created_at', endDate),
+                    Query.equal('is_completed', true)
+                ]
+            );
+
+            if (sessions.documents.length === 0) {
+                return this.processQuestionAnalytics([], quizType);
+            }
+
+            // Get session IDs
+            const sessionIds = sessions.documents.map(session => session.$id);
+
+            // Get all responses for these sessions
+            const responses = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTIONS.QUIZ_RESPONSES,
+                [
+                    Query.contains('session_id', sessionIds),
+                    Query.greaterThanEqual('created_at', startDate),
+                    Query.lessThanEqual('created_at', endDate)
+                ]
+            );
+
+            return this.processQuestionAnalytics(responses.documents, quizType);
+        } catch (error) {
+            toast.error(`Error fetching question analytics: ${error}`, { position: "bottom-right" });
+            console.error('Error fetching question analytics:', error);
+            return null;
+        }
+    }
+
     static processAnalytics(sessions) {
         const total = sessions.length;
         const completed = sessions.filter(s => s.is_completed).length;
@@ -171,6 +212,40 @@ class QuizAnalytics {
             averageScore,
             sessions
         };
+    }
+
+    static processQuestionAnalytics(responses, quizType) {
+        const questionData = {};
+        
+        // Determine number of options based on quiz type
+        const getOptionsCount = (quizType) => {
+            if (quizType === 'inclusion' || quizType === 'financial') {
+                return 3; // Options A, B, C
+            }
+            return 4; // Options A, B, C, D for posh and workplace
+        };
+        
+        const optionsCount = getOptionsCount(quizType);
+        
+        // Initialize data structure for 10 questions (0-based indexing)
+        for (let i = 0; i < 10; i++) {
+            questionData[i] = {};
+            for (let j = 0; j < optionsCount; j++) {
+                questionData[i][j] = 0;
+            }
+        }
+
+        // Process each response
+        responses.forEach(response => {
+            const questionNum = response.question_number;
+            const selectedOption = response.selected_option_index;
+            
+            if (questionData[questionNum] && selectedOption !== undefined) {
+                questionData[questionNum][selectedOption] = (questionData[questionNum][selectedOption] || 0) + 1;
+            }
+        });
+
+        return questionData;
     }
 
     // HELPER FUNCTIONS

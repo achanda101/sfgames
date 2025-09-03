@@ -332,7 +332,7 @@ export default function FinancialJourneyGame() {
         const timeTaken = Math.round((Date.now() - questionStartTime) / 1000);
         await QuizAnalytics.recordResponse(
           sessionId,
-          currentChapter + 1,
+          currentChapter,
           choiceIndex,
           choice.points,
           timeTaken,

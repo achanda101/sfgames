@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BarChart3, Users, Trophy, Clock, Monitor, Globe, Calendar, Star } from 'lucide-react';
+import { BarChart3, Users, Trophy, Clock, Monitor, Globe, Calendar, Star, ChevronDown, ChevronUp } from 'lucide-react';
 import QuizAnalytics from './utils/QuizAnalytics.js';
 import './dashboard.css';
 
@@ -8,6 +8,8 @@ const QuizDashboard = () => {
     const [ loading, setLoading ] = useState(true);
     const [ selectedQuizType, setSelectedQuizType ] = useState('all');
     const [ dateRange, setDateRange ] = useState('7'); // days
+    const [ expandedQuiz, setExpandedQuiz ] = useState(null);
+    const [ questionAnalytics, setQuestionAnalytics ] = useState({});
 
     const quizTypes = [
         { value: 'all', label: 'All Quizzes' },
@@ -19,6 +21,8 @@ const QuizDashboard = () => {
 
     const fetchAnalytics = useCallback(async () => {
         setLoading(true);
+        // Clear cached question analytics when fetching new data
+        setQuestionAnalytics({});
         try {
             const endDate = new Date().toISOString();
             const startDate = new Date(Date.now() - parseInt(dateRange) * 24 * 60 * 60 * 1000).toISOString();
@@ -143,6 +147,32 @@ const QuizDashboard = () => {
         };
     };
 
+    const toggleQuizExpansion = async (quizValue) => {
+        if (expandedQuiz === quizValue) {
+            setExpandedQuiz(null);
+            return;
+        }
+
+        setExpandedQuiz(quizValue);
+
+        // Fetch detailed question analytics if not already loaded
+        if (!questionAnalytics[quizValue]) {
+            try {
+                const endDate = new Date().toISOString();
+                const startDate = new Date(Date.now() - parseInt(dateRange) * 24 * 60 * 60 * 1000).toISOString();
+                
+                const questionData = await QuizAnalytics.getQuestionAnalytics(quizValue, startDate, endDate);
+                
+                setQuestionAnalytics(prev => ({
+                    ...prev,
+                    [quizValue]: questionData
+                }));
+            } catch (error) {
+                console.error('Error fetching question analytics:', error);
+            }
+        }
+    };
+
     const metadata = getPlayerMetadata();
     const recentSessions = getRecentSessions();
     const quizBreakdown = getQuizTypeBreakdown();
@@ -256,24 +286,62 @@ const QuizDashboard = () => {
                             </div>
                             <div className="section-content">
                                 <div className="quiz-breakdown">
-                                    {quizBreakdown.map((quiz, index) => (
-                                        <div key={index} className="quiz-item">
-                                            <div className="quiz-info">
-                                                <h4>{quiz.name}</h4>
-                                                <div className="quiz-stats">
-                                                    <span>{quiz.attempts} attempts</span>
-                                                    <span>{quiz.completions} completed</span>
-                                                    <span>Avg: {quiz.avgScore.toFixed(1)}</span>
+                                    {quizBreakdown.map((quiz, index) => {
+                                        const quizValue = quizTypes.find(q => q.label === quiz.name)?.value;
+                                        const isExpanded = expandedQuiz === quizValue;
+                                        
+                                        return (
+                                            <div key={index} className="quiz-accordion">
+                                                <div 
+                                                    className="quiz-item clickable"
+                                                    onClick={() => toggleQuizExpansion(quizValue)}
+                                                >
+                                                    <div className="quiz-info">
+                                                        <h4>{quiz.name}</h4>
+                                                        <div className="quiz-stats">
+                                                            <span>{quiz.attempts} attempts</span>
+                                                            <span>{quiz.completions} completed</span>
+                                                            <span>Avg: {quiz.avgScore.toFixed(1)}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="quiz-item-right">
+                                                        <div className="progress-bar">
+                                                            <div
+                                                                className="progress-fill"
+                                                                style={{ width: `${quiz.attempts > 0 ? (quiz.completions / quiz.attempts) * 100 : 0}%` }}
+                                                            ></div>
+                                                        </div>
+                                                        <div className="expand-icon">
+                                                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                
+                                                {isExpanded && questionAnalytics[quizValue] && (
+                                                    <div className="quiz-details">
+                                                        <div className="question-analytics">
+                                                            <h5>Question-by-Question Breakdown</h5>
+                                                            <div className="questions-grid">
+                                                                {Object.entries(questionAnalytics[quizValue]).map(([questionNum, options]) => (
+                                                                    <div key={questionNum} className="question-column">
+                                                                        <div className="question-header">Q{parseInt(questionNum) + 1}</div>
+                                                                        <div className="options-breakdown">
+                                                                            {Object.entries(options).map(([optionIndex, count]) => (
+                                                                                <div key={optionIndex} className="option-count">
+                                                                                    <span className="option-label">{String.fromCharCode(65 + parseInt(optionIndex))}</span>
+                                                                                    <span className="option-value">{count}</span>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className="progress-bar">
-                                                <div
-                                                    className="progress-fill"
-                                                    style={{ width: `${quiz.attempts > 0 ? (quiz.completions / quiz.attempts) * 100 : 0}%` }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>

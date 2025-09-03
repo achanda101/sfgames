@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-import QuizAnalytics from '../utils/QuizAnalytics.js';
+import { useState } from 'react';
 
 const chapters = [
   {
@@ -272,41 +271,8 @@ export default function FinancialJourneyGame() {
   const [feedbackText, setFeedbackText] = useState('');
   const [isPositiveFeedback, setIsPositiveFeedback] = useState(true);
   const [showFinalScreen, setShowFinalScreen] = useState(false);
-  const [sessionId, setSessionId] = useState(null);
-  const [isSessionActive, setIsSessionActive] = useState(false);
-  const [questionStartTime, setQuestionStartTime] = useState(null);
-  const sessionInitialized = useRef(false);
 
   const currentChapterData = chapters[currentChapter];
-
-  // Initialize analytics session when component mounts
-  useEffect(() => {
-    const initializeSession = async () => {
-      if (sessionInitialized.current) return;
-      sessionInitialized.current = true;
-      
-      try {
-        const newSessionId = await QuizAnalytics.startQuizSession('financial');
-        if (newSessionId) {
-          setSessionId(newSessionId);
-          setIsSessionActive(true);
-          setQuestionStartTime(Date.now());
-          console.log('Analytics session started:', newSessionId);
-        }
-      } catch (error) {
-        console.error('Failed to start analytics session:', error);
-      }
-    };
-
-    initializeSession();
-  }, []);
-
-  // Set question start time when chapter changes
-  useEffect(() => {
-    if (sessionId && isSessionActive) {
-      setQuestionStartTime(Date.now());
-    }
-  }, [currentChapter, sessionId, isSessionActive]);
 
   const getFinancialStatus = () => {
     if (totalScore >= 250) return "Financial Guru";
@@ -315,7 +281,7 @@ export default function FinancialJourneyGame() {
     else return "Fresh Start";
   };
 
-  const selectChoice = async (choiceIndex) => {
+  const selectChoice = (choiceIndex) => {
     if (selectedChoice !== null) return;
     
     setSelectedChoice(choiceIndex);
@@ -325,91 +291,26 @@ export default function FinancialJourneyGame() {
     setFeedbackText(choice.feedback);
     setIsPositiveFeedback(choice.points > 0);
     setShowFeedback(true);
-
-    // Record response in analytics
-    if (sessionId && isSessionActive && questionStartTime) {
-      try {
-        const timeTaken = Math.round((Date.now() - questionStartTime) / 1000);
-        await QuizAnalytics.recordResponse(
-          sessionId,
-          currentChapter + 1,
-          choiceIndex,
-          choice.points,
-          timeTaken,
-          currentChapterData.title,
-          [choice.points]
-        );
-        console.log('Response recorded successfully');
-      } catch (error) {
-        console.error('Failed to record response:', error);
-      }
-    }
   };
 
-  const nextChapter = async () => {
+  const nextChapter = () => {
     if (selectedChoice === null) return;
     
     if (currentChapter >= chapters.length - 1) {
-      // Complete the analytics session when game finishes
-      if (sessionId && isSessionActive) {
-        try {
-          await QuizAnalytics.completeQuizSession(
-            sessionId,
-            totalScore,
-            0, // finalInclusionScore - not applicable for this game
-            0, // finalDiversityScore - not applicable for this game  
-            0  // finalEquityScore - not applicable for this game
-          );
-          setIsSessionActive(false);
-          console.log('Analytics session completed with final score:', totalScore);
-        } catch (error) {
-          console.error('Failed to complete analytics session:', error);
-        }
-      }
       setShowFinalScreen(true);
     } else {
       setCurrentChapter(prev => prev + 1);
       setSelectedChoice(null);
       setShowFeedback(false);
-      // Question start time will be updated by useEffect
     }
   };
 
-  const restartGame = async () => {
-    // Complete current session if active
-    if (sessionId && isSessionActive) {
-      try {
-        await QuizAnalytics.completeQuizSession(
-          sessionId,
-          totalScore,
-          0, 0, 0
-        );
-        console.log('Previous session completed before restart');
-      } catch (error) {
-        console.error('Failed to complete previous session:', error);
-      }
-    }
-
-    // Reset game state
+  const restartGame = () => {
     setCurrentChapter(0);
     setTotalScore(0);
     setSelectedChoice(null);
     setShowFeedback(false);
     setShowFinalScreen(false);
-    
-    // Start new analytics session
-    try {
-      sessionInitialized.current = false; // Reset the flag for restart
-      const newSessionId = await QuizAnalytics.startQuizSession('financial');
-      if (newSessionId) {
-        setSessionId(newSessionId);
-        setIsSessionActive(true);
-        setQuestionStartTime(Date.now());
-        console.log('New analytics session started:', newSessionId);
-      }
-    } catch (error) {
-      console.error('Failed to start new analytics session:', error);
-    }
   };
 
   const exploreLocation = (location) => {

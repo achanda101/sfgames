@@ -75,10 +75,15 @@ const QuizDashboard = () => {
 
         return quizTypes.slice(1).map(quiz => {
             const data = analyticsData[ quiz.value ] || {};
+            const attempts = data.totalAttempts || 0;
+            const completions = data.totalCompletions || 0;
+            const completionRate = attempts > 0 ? (completions / attempts) * 100 : 0;
+            
             return {
                 name: quiz.label,
-                attempts: data.totalAttempts || 0,
-                completions: data.totalCompletions || 0,
+                attempts: attempts,
+                completions: completions,
+                completionRate: completionRate,
                 avgScore: data.averageScore || 0
             };
         });
@@ -269,7 +274,7 @@ const QuizDashboard = () => {
                                 <Star />
                             </div>
                             <div className="card-text">
-                                <h3>Most Popular <span className="card-subtitle">(by attempts)</span></h3>
+                                <h3>Most Played <span className="card-subtitle">(by attempts)</span></h3>
                                 <p>{mostPopularQuiz.name === 'No Data' ? 'N/A' : mostPopularQuiz.name.split(' ')[0]}</p>
                             </div>
                         </div>
@@ -298,18 +303,32 @@ const QuizDashboard = () => {
                                                 >
                                                     <div className="quiz-info">
                                                         <h4>{quiz.name}</h4>
-                                                        <div className="quiz-stats">
-                                                            <span>{quiz.attempts} attempts</span>
-                                                            <span>{quiz.completions} completed</span>
-                                                            <span>Avg: {quiz.avgScore.toFixed(1)}</span>
+                                                        <div className="quiz-stats-inline">
+                                                            <span className="stat-group">
+                                                                <strong>{quiz.attempts}</strong> attempts
+                                                            </span>
+                                                            <span className="stat-separator">•</span>
+                                                            <span className="stat-group">
+                                                                <strong>{quiz.completions}</strong> completed
+                                                            </span>
+                                                            <span className="stat-separator">•</span>
+                                                            <span className="stat-group">
+                                                                Avg: <strong>{quiz.avgScore.toFixed(1)}</strong>
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div className="quiz-item-right">
-                                                        <div className="progress-bar">
-                                                            <div
-                                                                className="progress-fill"
-                                                                style={{ width: `${quiz.attempts > 0 ? (quiz.completions / quiz.attempts) * 100 : 0}%` }}
-                                                            ></div>
+                                                        <div className="progress-section">
+                                                            <div className="completion-rate-label">
+                                                                <div className="completion-rate-percentage">{quiz.completionRate.toFixed(1)}%</div>
+                                                                <div className="completion-rate-text">completion rate</div>
+                                                            </div>
+                                                            <div className="progress-bar">
+                                                                <div
+                                                                    className="progress-fill"
+                                                                    style={{ width: `${quiz.attempts > 0 ? (quiz.completions / quiz.attempts) * 100 : 0}%` }}
+                                                                ></div>
+                                                            </div>
                                                         </div>
                                                         <div className="expand-icon">
                                                             {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}

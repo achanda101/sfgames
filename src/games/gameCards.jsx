@@ -6,6 +6,7 @@ const GameCard = ({ title, link, img }) => {
     else if (link === "/financial") bgColor = "bg-orange-200";
     else if (link === "/workplace") bgColor = "bg-blue-200";
     else if (link === "/posh") bgColor = "bg-red-200";
+    else if (link === "/dashboard") bgColor = "bg-green-200";
 
     return (
         <Link to={link} className="block w-full max-w-xs">
@@ -31,19 +32,21 @@ const GameCardsGrid = () => {
         { title: "Financial\nLiteracy", id: 2, link: "/financial", img: "/financial.jpg" },
         { title: "Workplace\nEtiquette", id: 3, link: "/workplace", img: "/workplace.png" },
         { title: "PoSH", id: 4, link: "/posh", img: "/posh.jpg" },
+        { title: "Analytics\nDashboard", id: 5, link: "/dashboard", img: "/dashboard.png" },
     ];
 
     return (
         <div className="min-h-screen bg-green-100 flex items-center justify-center p-4 md:p-8">
             <div className="w-full max-w-2xl">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center">
-                    {cards.map((card) => (
-                        <GameCard
-                            key={card.id}
-                            title={card.title}
-                            link={card.link}
-                            img={card.img}
-                        />
+                    {cards.map((card, index) => (
+                        <div key={card.id} className={index === 4 ? "sm:col-span-2 sm:flex sm:justify-center" : ""}>
+                            <GameCard
+                                title={card.title}
+                                link={card.link}
+                                img={card.img}
+                            />
+                        </div>
                     ))}
                 </div>
             </div>
